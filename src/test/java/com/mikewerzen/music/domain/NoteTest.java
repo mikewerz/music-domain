@@ -8,11 +8,11 @@ public class NoteTest
 	@Test
 	public void test()
 	{
-		Note note = new Note("D");
+		Note note = new Note("C");
 		System.out.println(note);
 
-		System.out.println(Scale.MAJOR.listNotes(note));
-		System.out.println(Scale.MINOR.listNotes(note));
+		System.out.println(Chord.MAJOR.listNotes(note));
+		System.out.println(Chord.MINOR.listNotes(note, 2));
 
 	}
 }
