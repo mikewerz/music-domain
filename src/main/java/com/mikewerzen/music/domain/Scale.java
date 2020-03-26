@@ -7,14 +7,16 @@ import static com.mikewerzen.music.domain.Interval.*;
 
 public enum Scale
 {
-	MAJOR(Arrays.asList(P1, M2, M3, P4, P5, M6, M7, P8)),
-	MINOR(Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8))
+	MAJOR("", Arrays.asList(P1, M2, M3, P4, P5, M6, M7, P8)),
+	MINOR("m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8))
 	;
 
+	private String suffix;
 	private List<Interval> intervals;
 
-	Scale(List<Interval> intervals)
+	Scale(String suffix, List<Interval> intervals)
 	{
+		this.suffix = suffix;
 		this.intervals = intervals;
 	}
 
@@ -28,5 +30,10 @@ public enum Scale
 
 
 		return notes;
+	}
+
+	public String getSuffix()
+	{
+		return suffix;
 	}
 }

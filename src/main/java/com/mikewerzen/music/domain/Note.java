@@ -12,7 +12,6 @@ public class Note
 		this.name = name;
 		this.letter = Letter.valueOf(name.substring(0, 1));
 		int accidentals = name.chars().map(c -> c == '#' ? 1 : c == 'b' ? -1 : 0).sum();
-		System.out.println("Accidentals in : " + name + " :: " + accidentals);
 		this.semitonesAboveC = letter.getSemitonesFromC() + accidentals;
 	}
 
@@ -62,6 +61,26 @@ public class Note
 		return new Note(nameBuilder.toString(), noteLetter, noteOctave, noteSemitones);
 
 
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public Letter getLetter()
+	{
+		return letter;
+	}
+
+	public int getOctave()
+	{
+		return octave;
+	}
+
+	public int getSemitonesAboveC()
+	{
+		return semitonesAboveC;
 	}
 
 	@Override public String toString()
