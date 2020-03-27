@@ -2,10 +2,10 @@ package com.mikewerzen.music.domain;
 
 public class Note
 {
-	private String name;
-	private Letter letter;
-	private int octave = 4;
-	private int semitonesAboveC;
+	private final String name;
+	private final Letter letter;
+	private final int octave;
+	private final int semitonesAboveC;
 
 	public Note(String name)
 	{
@@ -13,6 +13,7 @@ public class Note
 		this.letter = Letter.valueOf(name.substring(0, 1));
 		int accidentals = name.chars().map(c -> c == '#' ? 1 : c == 'b' ? -1 : 0).sum();
 		this.semitonesAboveC = letter.getSemitonesFromC() + accidentals;
+		this.octave = 4;
 	}
 
 	public Note(String name, Letter letter, int octave, int semitonesAboveC)
@@ -63,6 +64,10 @@ public class Note
 
 	}
 
+	public Note setOctave(int octave) {
+		return new Note(name, letter, octave, semitonesAboveC);
+	}
+
 	public String getName()
 	{
 		return name;
@@ -81,6 +86,10 @@ public class Note
 	public int getSemitonesAboveC()
 	{
 		return semitonesAboveC;
+	}
+
+	public int getSemitonesFromLowestC() {
+		return getSemitonesAboveC() + ((octave + 1) * 12);
 	}
 
 	@Override public String toString()

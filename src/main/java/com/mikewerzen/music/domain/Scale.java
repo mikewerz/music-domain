@@ -1,7 +1,11 @@
 package com.mikewerzen.music.domain;
 
+import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.mikewerzen.music.domain.Interval.*;
 
@@ -20,7 +24,25 @@ public enum Scale
 		this.intervals = intervals;
 	}
 
-	public String listNotes(Note root) {
+	public List<Note> getNotes(Note root)
+	{
+		return intervals.stream().map(interval -> root.addInterval(interval)).collect(Collectors.toList());
+	}
+
+	public List<Note> getNotesAcrossSevenOctaves(Note root)
+	{
+		List<Note> allNotes = new ArrayList<>();
+		for(int i = 1; i <= 7; i++)
+		{
+			root = root.setOctave(i);
+			allNotes.addAll(getNotes(root));
+			allNotes.remove(allNotes.size() - 1);
+		}
+
+		return allNotes;
+	}
+
+	public String printNotes(Note root) {
 		String notes = "";
 
 		for(Interval interval : intervals)

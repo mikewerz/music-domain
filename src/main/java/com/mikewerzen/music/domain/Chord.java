@@ -1,7 +1,5 @@
 package com.mikewerzen.music.domain;
 
-import sun.security.provider.MD5;
-
 import java.util.Arrays;
 import java.util.List;
 

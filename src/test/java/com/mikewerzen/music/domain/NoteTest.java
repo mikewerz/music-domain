@@ -11,8 +11,9 @@ public class NoteTest
 		Note note = new Note("C");
 		System.out.println(note);
 
-		System.out.println(Chord.ADD9.listNotes(note));
-		System.out.println(Chord.MINOR.listNotes(note, 2));
+		System.out.println(Scale.MAJOR.getNotesAcrossSevenOctaves(note));
+		//System.out.println(Chord.MINOR.listNotes(note, 2));
 
 	}
 }
+
