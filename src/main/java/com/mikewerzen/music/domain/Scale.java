@@ -12,7 +12,8 @@ import static com.mikewerzen.music.domain.Interval.*;
 public enum Scale
 {
 	MAJOR("", Arrays.asList(P1, M2, M3, P4, P5, M6, M7, P8)),
-	MINOR("m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8))
+	MINOR("m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8)),
+	CHROMATIC("", Arrays.asList(P1, m2, M2, m3, M3, P4, A4, P5, m6, M6, m7, M7, P8))
 	;
 
 	private String suffix;

@@ -1,5 +1,7 @@
 package com.mikewerzen.music.domain;
 
+import java.util.Arrays;
+
 import static com.mikewerzen.music.domain.IntervalNumber.*;
 import static com.mikewerzen.music.domain.IntervalQuality.*;
 
@@ -86,5 +88,51 @@ public enum Interval
 	public IntervalQuality getQuality()
 	{
 		return quality;
+	}
+
+	public Interval invert()
+	{
+		if(getNumber().isCompound())
+		{
+			return invertCompoundInterval();
+		}
+
+		return invertSimpleInterval();
+	}
+
+	private Interval invertSimpleInterval()
+	{
+		IntervalQuality invertedQuality = null;
+		switch (quality) {
+			case MAJOR:
+				invertedQuality = MINOR;
+				break;
+			case MINOR:
+				invertedQuality = MAJOR;
+				break;
+			case PERFECT:
+				invertedQuality = PERFECT;
+				break;
+			case AUGMENTED:
+				invertedQuality = DIMINISHED;
+				break;
+			case DIMINISHED:
+				invertedQuality = AUGMENTED;
+				break;
+		}
+
+		IntervalNumber invertedNumber = IntervalNumber.findByNumber(9 - (number.getIndex() + 1));
+
+		return findByQualityAndNumber(invertedQuality, invertedNumber);
+	}
+
+	private Interval invertCompoundInterval()
+	{
+		return findByQualityAndNumber(quality, IntervalNumber.findByNumber((number.getIndex() + 1) - 7));
+	}
+
+	public static Interval findByQualityAndNumber(IntervalQuality quality, IntervalNumber number)
+	{
+		return Arrays.stream(Interval.values()).filter(interval -> interval.quality == quality && interval.number == number).findAny().orElseThrow(() -> new RuntimeException("Could Not Find Interval: " + quality + " " + number));
 	}
 }
