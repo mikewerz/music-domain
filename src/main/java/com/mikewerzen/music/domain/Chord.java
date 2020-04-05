@@ -1,107 +1,120 @@
 package com.mikewerzen.music.domain;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static com.mikewerzen.music.domain.Interval.*;
-import static com.mikewerzen.music.domain.Utils.*;
-
-public enum Chord
+public class Chord
 {
-	// Major
-	MAJOR("Major", s("", "maj"), P1, M3, P5),
-	FLAT5("Major Flat Five", s("b5"), P1, M3, d5),
-	MAJ6("Major Sixth", s("6", "maj6"), P1, M3, P5, M6),
-	SIX_NINE("Six Nine", s("6/9"), P1, M3, P5, M6, M9),
-	ADD9("Added Ninth", s("add9"), P1, M3, P5, M9),
-	MAJ7("Major Seventh", s("maj7"), P1, M3, P5, M7),
-	MAJ7FLAT5("Major Seventh Flat Five", s("maj7b5"), P1, M3, d5, M7),
-	MAJ7SHARP5("Major Seventh Sharp Five", s("maj7#5"), P1, M3, A5, M7),
-	MAJ9("Major Ninth", s("maj9"), P1, M3, P5, M7, M9),
-	MAJ11("Major Eleventh", s("maj11"), P1, M3, P5, M7, M9, P11),
-	MAJ7SHARP11("Major Seventh Sharp Eleventh", s("maj7#11"), P1, M3, P5, M7, M9, A11),
-	MAJ13("Major Thirteenth", s("maj13"), P1, M3, P5, M7, M9, P11, M13),
-
-
-	//Minor
-	MINOR("Minor", s("m", "min", "-"), P1, m3, P5),
-
-	//Dom
-	DOM7("Dominant Seventh", s("7", "dom7"), P1, M3, P5, m7),
-
-	//Misc
-	SUS2("Suspended Second", s("sus2"), P1, M2, P5),
-	SUS4("Suspended Fourth", s("sus4"), P1, P4, P5),
-	MIN7("Minor Seventh", s("m7", "min7", "-7"), P1, m3, P5, m7),
-
-	;
-
 	private String name;
-	private List<String> suffixes;
-	private List<Interval> intervals;
+	private String shortName;
+	private ChordStructure chordStructure;
+	private Note root;
 
+	private List<Note> notes;
 
-	Chord(String name, List<String> suffixes, Interval... intervals)
+	public Chord(String chordName)
 	{
-		this.name = name;
-		this.suffixes = suffixes;
-		this.intervals = Arrays.asList(intervals);
-	}
+		String rootName;
+		String chordSuffix;
 
-	Chord(String name, List<String> suffixes, List<Interval> intervals)
-	{
-		this.name = name;
-		this.suffixes = suffixes;
-		this.intervals = intervals;
-	}
-
-
-	public String listNotes(Note root)
-	{
-		String notes = "";
-
-		for(Interval interval : intervals)
+		if (chordName.length() > 1 && (chordName.substring(1,2).contains("#") || chordName.substring(1,2).contains("b")))
 		{
-			notes += root.addInterval(interval);
+			rootName = chordName.substring(0,2);
+			chordSuffix = chordName.substring(2);
+		}
+		else
+		{
+			rootName = chordName.substring(0, 1);
+			chordSuffix = chordName.substring(1);
 		}
 
-		return notes;
+		Note root = new Note(rootName);
+		ChordStructure chordStructure = ChordStructure.findBySuffix(chordSuffix);
+
+		this.name = root.getName() + " " + chordStructure.getName();
+		this.shortName = chordName;
+		this.chordStructure = chordStructure;
+		this.root = root;
+		this.notes = chordStructure.getNotes(root);
+
 	}
 
-	public String listNotes(Note root, int inversion)
+	private Chord(String name, String shortName, ChordStructure chordStructure, Note root, List<Note> notes)
 	{
-		int currInv = 0;
+		this.name = name;
+		this.shortName = shortName;
+		this.chordStructure = chordStructure;
+		this.root = root;
+		this.notes = notes;
+	}
 
-		String notes = "";
+	public Chord(Note root, ChordStructure chordStructure)
+	{
+		this.name = root.getName() + " " + chordStructure.getName();
+		this.shortName = root.getName() + chordStructure.getSuffixes().get(0);
+		this.chordStructure = chordStructure;
+		this.root = root;
+		this.notes = chordStructure.getNotes(root);
+	}
 
-		for(Interval interval : intervals)
+	public Chord getInversion(int inversion)
+	{
+		if (inversion > notes.size())
 		{
-			if(currInv < inversion)
+			throw new RuntimeException("Inversion: " + inversion + " is greater than number of notes in chord: " + name);
+		}
+
+		List<Note> newNotes = notes.stream().collect(Collectors.toList());
+
+		for(int i = 0; i < inversion; i++)
+		{
+			Note note = newNotes.remove(0);
+			note = note.addInterval(Interval.P8);
+			newNotes.add(note);
+		}
+
+		String name = this.name + " " + Utils.getNumberName(inversion) + " Inversion";
+		String shortName = this.shortName + "/" + newNotes.get(0).getName();
+		return new Chord(name, shortName, chordStructure, root, newNotes);
+	}
+
+	public boolean matchesNotes(List<Note> testNotes)
+	{
+		if (testNotes == null || testNotes.isEmpty() || notes.size() != testNotes.size())
+		{
+			return false;
+		}
+
+		testNotes = new ArrayList<>(testNotes);
+		Collections.sort(new ArrayList<>(testNotes));
+
+		for(int i = 0; i < testNotes.size(); i++)
+		{
+			if (notes.get(i).getSemitonesAboveC() != testNotes.get(i).getSemitonesAboveC())
 			{
-				notes += root.addInterval(P8).addInterval(interval);
-				currInv++;
-			}
-			else
-			{
-				notes += root.addInterval(interval);
+				return false;
 			}
 		}
 
-		return notes;
+		return true;
 	}
 
-	public String getName()
+	public List<Note> getNotes()
 	{
-		return name;
+		return Collections.unmodifiableList(notes);
 	}
 
-	public List<String> getSuffixes()
-	{
-		return suffixes;
-	}
 
-	public List<Interval> getIntervals()
+	@Override public String toString()
 	{
-		return intervals;
+		return "Chord{" +
+				"name='" + name + '\'' +
+				", shortName='" + shortName + '\'' +
+				", chordStructure=" + chordStructure +
+				", root=" + root +
+				", notes=" + notes +
+				'}';
 	}
 }

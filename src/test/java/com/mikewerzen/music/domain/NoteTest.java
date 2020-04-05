@@ -8,14 +8,14 @@ public class NoteTest
 	@Test
 	public void test()
 	{
-		Note note = new Note("C#");
-		System.out.println(note);
+		Note root = new Note("C");
+		Chord chord = new Chord(root, ChordStructure.ADD9);
 
-		//System.out.println(Scale.MAJOR.getNotesAcrossSevenOctaves(note));
-		//System.out.println(Chord.MINOR.listNotes(note, 2));
+		System.out.println(chord.matchesNotes(new Chord("Cadd9").getNotes()));
+		System.out.println(chord.getInversion(1));
+		System.out.println(chord.getInversion(3));
 
-		System.out.println(note.getEnharmonicNote());
-		System.out.println(note.getEnharmonicNote().get().equals(note));
+		System.out.println(Scale.MAJOR.getNotesAcrossSevenOctaves(root));
 
 	}
 }

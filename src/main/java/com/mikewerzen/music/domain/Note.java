@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Note
+public class Note implements Comparable<Note>
 {
 	private final String name;
 	private final Letter letter;
@@ -68,7 +68,7 @@ public class Note
 		int letterSemitones = noteLetter.getSemitonesFromC() + ((noteOctave - octave) * Constants.SCALE_LENGTH);
 		int accidentalsNeeded = noteSemitones - letterSemitones;
 
-		String name = noteLetter.name() + getAccidentals(noteLetter, accidentalsNeeded);
+		String name = noteLetter.name() + getAccidentals(accidentalsNeeded);
 
 		noteSemitones = noteSemitones % Constants.SCALE_LENGTH;
 
@@ -93,13 +93,11 @@ public class Note
 
 	private static String getAccidentals(Letter letter,  int desiredSemitonesAboveC)
 	{
-		return getAccidentals(letter.getSemitonesFromC(), desiredSemitonesAboveC);
+		return getAccidentals(desiredSemitonesAboveC - letter.getSemitonesFromC());
 	}
 
-	private static String getAccidentals(int baseSemitones,  int desiredSemitonesAboveC)
+	private static String getAccidentals(int accidentalsNeeded)
 	{
-		int accidentalsNeeded = desiredSemitonesAboveC - baseSemitones;
-
 		StringBuilder stringBuilder = new StringBuilder();
 		while(accidentalsNeeded > 0)
 		{
@@ -200,5 +198,13 @@ public class Note
 				", octave=" + octave +
 				", semitonesAboveC=" + semitonesAboveC +
 				'}';
+	}
+
+	@Override public int compareTo(Note o)
+	{
+		int mySemitones = getSemitonesFromLowestC();
+		int otherSemitones = o.getSemitonesFromLowestC();
+
+		return Integer.compare(mySemitones, otherSemitones);
 	}
 }
