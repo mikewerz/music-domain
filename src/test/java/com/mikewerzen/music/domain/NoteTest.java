@@ -15,7 +15,7 @@ public class NoteTest
 		System.out.println(chord.getInversion(1));
 		System.out.println(chord.getInversion(3));
 
-		System.out.println(Scale.MAJOR.getNotesAcrossSevenOctaves(root));
+		System.out.println(Scale.CHROMATIC.getNotes(root));
 
 	}
 }

@@ -147,25 +147,6 @@ public class Note implements Comparable<Note>
 		return getSemitonesAboveC() + ((octave + 1) * 12);
 	}
 
-	@Override public boolean equals(Object o)
-	{
-		if (this == o)
-		{
-			return true;
-		}
-		if (o == null || getClass() != o.getClass())
-		{
-			return false;
-		}
-		Note note = (Note) o;
-		return getSemitonesFromLowestC() == note.getSemitonesFromLowestC();
-	}
-
-	@Override public int hashCode()
-	{
-		return Objects.hash(getSemitonesFromLowestC());
-	}
-
 	public Note setOctave(int octave) {
 		return new Note(name, letter, octave, semitonesAboveC);
 	}
@@ -206,5 +187,24 @@ public class Note implements Comparable<Note>
 		int otherSemitones = o.getSemitonesFromLowestC();
 
 		return Integer.compare(mySemitones, otherSemitones);
+	}
+
+	@Override public boolean equals(Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+		Note note = (Note) o;
+		return getSemitonesFromLowestC() == note.getSemitonesFromLowestC();
+	}
+
+	@Override public int hashCode()
+	{
+		return Objects.hash(getSemitonesFromLowestC());
 	}
 }
