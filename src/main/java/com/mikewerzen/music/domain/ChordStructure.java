@@ -1,11 +1,13 @@
 package com.mikewerzen.music.domain;
 
+import com.mikewerzen.music.domain.util.IntervalNote;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.mikewerzen.music.domain.Interval.*;
-import static com.mikewerzen.music.domain.Utils.*;
+import static com.mikewerzen.music.domain.Utils.s;
 
 public enum ChordStructure
 {
@@ -58,7 +60,11 @@ public enum ChordStructure
 
 	public static ChordStructure findBySuffix(String suffix)
 	{
-		return Arrays.stream(values()).filter(chordStructure -> chordStructure.getSuffixes().contains(suffix)).findFirst().orElseThrow(() -> new RuntimeException("Could Not Find Chord Suffix"));
+		return Arrays
+				.stream(values())
+				.filter(chordStructure -> chordStructure.getSuffixes().contains(suffix))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("Could Not Find Chord Suffix"));
 	}
 
 	public List<Note> getNotes(Note root)
@@ -66,39 +72,18 @@ public enum ChordStructure
 		return intervals.stream().map(interval -> root.addInterval(interval)).collect(Collectors.toList());
 	}
 
-
-	public String listNotes(Note root)
+	public List<IntervalNote> getIntervalNotes(Note root)
 	{
-		String notes = "";
-
-		for(Interval interval : intervals)
-		{
-			notes += root.addInterval(interval);
-		}
-
-		return notes;
+		return intervals.stream().map(interval -> new IntervalNote(interval, root)).collect(Collectors.toList());
 	}
 
-	public String listNotes(Note root, int inversion)
+	public List<Note> getNotesWithIntervalNames(Note root)
 	{
-		int currInv = 0;
-
-		String notes = "";
-
-		for(Interval interval : intervals)
-		{
-			if(currInv < inversion)
-			{
-				notes += root.addInterval(P8).addInterval(interval);
-				currInv++;
-			}
-			else
-			{
-				notes += root.addInterval(interval);
-			}
-		}
-
-		return notes;
+		return intervals
+				.stream()
+				.map(interval -> new IntervalNote(interval, root))
+				.map(IntervalNote::getNoteWithIntervalName)
+				.collect(Collectors.toList());
 	}
 
 	public String getName()

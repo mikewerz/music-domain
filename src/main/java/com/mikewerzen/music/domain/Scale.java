@@ -1,10 +1,10 @@
 package com.mikewerzen.music.domain;
 
-import javax.swing.*;
+import com.mikewerzen.music.domain.util.IntervalNote;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.mikewerzen.music.domain.Interval.*;
@@ -33,7 +33,7 @@ public enum Scale
 	public List<Note> getNotesAcrossSevenOctaves(Note root)
 	{
 		List<Note> allNotes = new ArrayList<>();
-		for(int i = 1; i <= 7; i++)
+		for (int i = 1; i <= 7; i++)
 		{
 			root = root.setOctave(i);
 			allNotes.addAll(getNotes(root));
@@ -43,10 +43,25 @@ public enum Scale
 		return allNotes;
 	}
 
-	public String printNotes(Note root) {
+	public List<IntervalNote> getIntervalNotes(Note root)
+	{
+		return intervals.stream().map(interval -> new IntervalNote(interval, root)).collect(Collectors.toList());
+	}
+
+	public List<Note> getNotesWithIntervalNames(Note root)
+	{
+		return intervals
+				.stream()
+				.map(interval -> new IntervalNote(interval, root))
+				.map(IntervalNote::getNoteWithIntervalName)
+				.collect(Collectors.toList());
+	}
+
+	public String printNotes(Note root)
+	{
 		String notes = "";
 
-		for(Interval interval : intervals)
+		for (Interval interval : intervals)
 		{
 			notes += root.addInterval(interval) + "\n";
 		}

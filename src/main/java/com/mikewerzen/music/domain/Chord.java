@@ -1,6 +1,7 @@
 package com.mikewerzen.music.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,19 +81,19 @@ public class Chord
 		return new Chord(name, shortName, chordStructure, root, newNotes);
 	}
 
-	public boolean matchesNotes(List<Note> testNotes)
+	public boolean matchesNotes(Collection<Note> testNotes)
 	{
 		if (testNotes == null || testNotes.isEmpty() || notes.size() != testNotes.size())
 		{
 			return false;
 		}
 
-		testNotes = new ArrayList<>(testNotes);
-		Collections.sort(new ArrayList<>(testNotes));
+		List<Note> sortedNotes = new ArrayList<>(testNotes);
+		Collections.sort(sortedNotes);
 
-		for(int i = 0; i < testNotes.size(); i++)
+		for(int i = 0; i < sortedNotes.size(); i++)
 		{
-			if (notes.get(i).getSemitonesAboveC() != testNotes.get(i).getSemitonesAboveC())
+			if (notes.get(i).getSemitonesAboveC() != sortedNotes.get(i).getSemitonesAboveC())
 			{
 				return false;
 			}
@@ -106,6 +107,10 @@ public class Chord
 		return Collections.unmodifiableList(notes);
 	}
 
+	public List<Note> getNotesWithIntervalNames()
+	{
+		return chordStructure.getNotesWithIntervalNames(root);
+	}
 
 	@Override public String toString()
 	{
