@@ -12,7 +12,7 @@ public class Chord
 	private String shortName;
 	private ChordStructure chordStructure;
 	private Note root;
-
+	private Note slashRoot;
 	private List<Note> notes;
 
 	public Chord(String chordName)
@@ -32,13 +32,29 @@ public class Chord
 		}
 
 		Note root = new Note(rootName);
+
+		this.notes = new ArrayList<>();
+
+		if(chordName.contains("/") && !chordName.contains("6/9"))
+		{
+			String[] split = chordSuffix.split("/");
+			slashRoot = new Note(split[1] + root.getOctave());
+			if(slashRoot.getSemitonesFromLowestC() > root.getSemitonesFromLowestC())
+			{
+				slashRoot = slashRoot.setOctave(slashRoot.getOctave() - 1);
+			}
+			chordSuffix = split[0];
+
+			notes.add(slashRoot);
+		}
+
 		ChordStructure chordStructure = ChordStructure.findBySuffix(chordSuffix);
 
 		this.name = root.getName() + " " + chordStructure.getName();
 		this.shortName = chordName;
 		this.chordStructure = chordStructure;
 		this.root = root;
-		this.notes = chordStructure.getNotes(root);
+		this.notes.addAll(chordStructure.getNotes(root));
 
 	}
 
@@ -81,7 +97,28 @@ public class Chord
 		return new Chord(name, shortName, chordStructure, root, newNotes);
 	}
 
+	public List<Chord> getInversions()
+	{
+		List<Chord> inversions = new ArrayList<>();
+		inversions.add(this);
+		for (int i = 1; i < notes.size(); i++)
+		{
+			inversions.add(getInversion(i));
+		}
+		return inversions;
+	}
+
 	public boolean matchesNotes(Collection<Note> testNotes)
+	{
+		if (testNotes == null || testNotes.isEmpty() || notes.size() != testNotes.size())
+		{
+			return false;
+		}
+
+		return testNotes.stream().allMatch(this::containsNoteWithoutOctave);
+	}
+
+	public boolean matchesNotesAndInversion(Collection<Note> testNotes)
 	{
 		if (testNotes == null || testNotes.isEmpty() || notes.size() != testNotes.size())
 		{
@@ -91,7 +128,7 @@ public class Chord
 		List<Note> sortedNotes = new ArrayList<>(testNotes);
 		Collections.sort(sortedNotes);
 
-		for(int i = 0; i < sortedNotes.size(); i++)
+		for (int i = 0; i < sortedNotes.size(); i++)
 		{
 			if (notes.get(i).getSemitonesAboveC() != sortedNotes.get(i).getSemitonesAboveC())
 			{
@@ -102,6 +139,16 @@ public class Chord
 		return true;
 	}
 
+	public String getName()
+	{
+		return name;
+	}
+
+	public String getShortName()
+	{
+		return shortName;
+	}
+
 	public List<Note> getNotes()
 	{
 		return Collections.unmodifiableList(notes);
@@ -110,6 +157,11 @@ public class Chord
 	public List<Note> getNotesWithIntervalNames()
 	{
 		return chordStructure.getNotesWithIntervalNames(root);
+	}
+
+	private boolean containsNoteWithoutOctave(Note test)
+	{
+		return notes.stream().filter(note -> note.getSemitonesAboveC() == test.getSemitonesAboveC()).findAny().isPresent();
 	}
 
 	@Override public String toString()
