@@ -110,6 +110,11 @@ public class Chord
 
 	public boolean matchesNotes(Collection<Note> testNotes)
 	{
+		if(slashRoot != null)
+		{
+			return matchesNotesAndInversion(testNotes);
+		}
+
 		if (testNotes == null || testNotes.isEmpty() || notes.size() != testNotes.size())
 		{
 			return false;
