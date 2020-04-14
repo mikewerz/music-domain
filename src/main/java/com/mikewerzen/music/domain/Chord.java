@@ -1,9 +1,6 @@
 package com.mikewerzen.music.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Chord
@@ -35,27 +32,48 @@ public class Chord
 
 		this.notes = new ArrayList<>();
 
+		Integer inversion = null;
 		if(chordName.contains("/") && !chordName.contains("6/9"))
 		{
 			String[] split = chordSuffix.split("/");
-			slashRoot = new Note(split[1] + root.getOctave());
-			if(slashRoot.getSemitonesFromLowestC() > root.getSemitonesFromLowestC())
+			slashRoot = new Note(split[1], root.getOctave());
+			if (slashRoot.getSemitonesFromLowestC() > root.getSemitonesFromLowestC())
 			{
 				slashRoot = slashRoot.setOctave(slashRoot.getOctave() - 1);
 			}
 			chordSuffix = split[0];
-
-			notes.add(slashRoot);
 		}
 
-		ChordStructure chordStructure = ChordStructure.findBySuffix(chordSuffix);
-
+		this.chordStructure = ChordStructure.findBySuffix(chordSuffix);
 		this.name = root.getName() + " " + chordStructure.getName();
 		this.shortName = chordName;
-		this.chordStructure = chordStructure;
 		this.root = root;
 		this.notes.addAll(chordStructure.getNotes(root));
 
+		if(slashRoot != null) {
+			Optional<Note> inversionNote = notes.stream().filter(note -> note.getSemitonesAboveC() == slashRoot.getSemitonesAboveC()).findAny();
+
+			if(inversionNote.isPresent())
+			{
+				inversion = notes.indexOf(inversionNote.get());
+			}
+			else
+			{
+				ArrayList<Note> newNotes = new ArrayList<>();
+				newNotes.add(slashRoot);
+				newNotes.addAll(notes);
+				notes = newNotes;
+			}
+		}
+
+		if (inversion != null)
+		{
+			Chord invertedChord = getInversion(inversion);
+			this.name = invertedChord.name;;
+			this.chordStructure = invertedChord.chordStructure;
+			this.root = invertedChord.root;
+			this.notes = invertedChord.notes;
+		}
 	}
 
 	private Chord(String name, String shortName, ChordStructure chordStructure, Note root, List<Note> notes)
@@ -106,6 +124,24 @@ public class Chord
 			inversions.add(getInversion(i));
 		}
 		return inversions;
+	}
+
+	public boolean matchesNoteWithRoot(Collection<Note> testNotes)
+	{
+		if (testNotes == null || testNotes.isEmpty() || notes.size() != testNotes.size())
+		{
+			return false;
+		}
+
+		List<Note> sortedNotes = new ArrayList<>(testNotes);
+		Collections.sort(sortedNotes);
+
+		if(notes.get(0).getSemitonesAboveC() != (sortedNotes.get(0).getSemitonesAboveC()))
+		{
+			return false;
+		}
+
+		return testNotes.stream().allMatch(this::containsNoteWithoutOctave);
 	}
 
 	public boolean matchesNotes(Collection<Note> testNotes)

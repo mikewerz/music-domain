@@ -46,4 +46,9 @@ public enum IntervalNumber
 	{
 		return isCompound;
 	}
+
+	public String getDisplayName()
+	{
+		return displayName;
+	}
 }

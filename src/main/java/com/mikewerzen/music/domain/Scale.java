@@ -11,18 +11,24 @@ import static com.mikewerzen.music.domain.Interval.*;
 
 public enum Scale
 {
-	MAJOR("", Arrays.asList(P1, M2, M3, P4, P5, M6, M7, P8)),
-	MINOR("m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8)),
-	CHROMATIC("", Arrays.asList(P1, m2, M2, m3, M3, P4, A4, P5, m6, M6, m7, M7, P8))
-	;
+	MAJOR("Major", "", Arrays.asList(P1, M2, M3, P4, P5, M6, M7, P8)),
+	MINOR("Minor", "m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8)),
+	CHROMATIC("Chromatic", "", Arrays.asList(P1, m2, M2, m3, M3, P4, A4, P5, m6, M6, m7, M7, P8));
 
+	private String name;
 	private String suffix;
 	private List<Interval> intervals;
 
-	Scale(String suffix, List<Interval> intervals)
+	Scale(String name, String suffix, List<Interval> intervals)
 	{
+		this.name = name;
 		this.suffix = suffix;
 		this.intervals = intervals;
+	}
+
+	public String getName()
+	{
+		return name;
 	}
 
 	public List<Note> getNotes(Note root)

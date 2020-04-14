@@ -126,13 +126,22 @@ public enum Interval
 		return findByQualityAndNumber(invertedQuality, invertedNumber);
 	}
 
+	public static Interval findByQualityAndNumber(IntervalQuality quality, IntervalNumber number)
+	{
+		return Arrays
+				.stream(Interval.values())
+				.filter(interval -> interval.quality == quality && interval.number == number)
+				.findAny()
+				.orElseThrow(() -> new RuntimeException("Could Not Find Interval: " + quality + " " + number));
+	}
+
+	public String getName()
+	{
+		return quality.getDisplayName() + " " + number.getDisplayName();
+	}
+
 	private Interval invertCompoundInterval()
 	{
 		return findByQualityAndNumber(quality, IntervalNumber.findByNumber((number.getIndex() + 1) - 7));
-	}
-
-	public static Interval findByQualityAndNumber(IntervalQuality quality, IntervalNumber number)
-	{
-		return Arrays.stream(Interval.values()).filter(interval -> interval.quality == quality && interval.number == number).findAny().orElseThrow(() -> new RuntimeException("Could Not Find Interval: " + quality + " " + number));
 	}
 }

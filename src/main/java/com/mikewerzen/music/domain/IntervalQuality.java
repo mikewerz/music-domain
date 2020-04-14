@@ -14,4 +14,9 @@ public enum IntervalQuality
 	{
 		this.displayName = displayName;
 	}
+
+	public String getDisplayName()
+	{
+		return displayName;
+	}
 }

@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public class Note implements Comparable<Note>
 {
-	private final String name;
-	private final Letter letter;
-	private final int octave;
-	private final int semitonesAboveC;
+	private String name;
+	private Letter letter;
+	private int octave;
+	private int semitonesAboveC;
 
 	public Note(String name)
 	{
@@ -19,6 +19,12 @@ public class Note implements Comparable<Note>
 		int accidentals = name.chars().map(c -> c == '#' ? 1 : c == 'b' ? -1 : 0).sum();
 		this.semitonesAboveC = letter.getSemitonesFromC() + accidentals;
 		this.octave = getOctaveOrDefault(name);;
+	}
+
+	public Note(String name, int octave)
+	{
+		this(name);
+		this.octave = octave;
 	}
 
 	public Note(String name, Letter letter, int octave, int semitonesAboveC)
@@ -31,7 +37,7 @@ public class Note implements Comparable<Note>
 
 	public Note(int semitonesAboveLowestC)
 	{
-		octave = Math.floorDiv(semitonesAboveLowestC, 12);
+		octave = Math.floorDiv(semitonesAboveLowestC, 12) - 1;
 		semitonesAboveC = semitonesAboveLowestC % 12;
 
 		letter = Arrays.stream(Letter.values())
@@ -40,6 +46,7 @@ public class Note implements Comparable<Note>
 				.orElseThrow(() -> new RuntimeException("Could Not Find Letter"));
 
 		name = letter.name() + getAccidentals(letter, semitonesAboveC);
+		getEnharmonicNote().ifPresent(enharmonic -> name = name + "/" + enharmonic.getName());
 	}
 
 	private static int getOctaveOrDefault(String name)
@@ -70,7 +77,13 @@ public class Note implements Comparable<Note>
 
 		String name = noteLetter.name() + getAccidentals(accidentalsNeeded);
 
-		noteSemitones = noteSemitones % Constants.SCALE_LENGTH;
+		noteSemitones = noteSemitones - ((noteOctave - octave) * Constants.SCALE_LENGTH);
+
+		while(noteSemitones >= Constants.SCALE_LENGTH)
+		{
+			noteSemitones -= Constants.SCALE_LENGTH;
+			noteOctave++;
+		}
 
 		return new Note(name, noteLetter, noteOctave, noteSemitones);
 
@@ -141,6 +154,13 @@ public class Note implements Comparable<Note>
 		String name = enharmonicLetter.name() + getAccidentals(enharmonicLetter, semitonesAboveC);
 
 		return Optional.of(new Note(name, enharmonicLetter, octave, semitonesAboveC ));
+	}
+
+	public String getNameWithEnharmonics()
+	{
+		StringBuilder nameBuilder = new StringBuilder(getName());
+		getEnharmonicNote().ifPresent(note -> nameBuilder.append("/").append(note.getName()));
+		return nameBuilder.toString();
 	}
 
 	public int getSemitonesFromLowestC() {

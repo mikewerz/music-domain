@@ -9,7 +9,41 @@ public class NoteTest
 
 	public static void main(String[] args)
 	{
-		System.out.println(new NoteTest().buildTable());
+		//System.out.println(new NoteTest().buildTable());
+		System.out.println(new Note(1));
+//		System.out.println(new Chord("C"));
+//		System.out.println(new Chord("C/F"));
+//		System.out.println(new Chord("C/E"));
+
+		for(int i = 0; i < 150; i++)
+		{
+			Note note = new Note(i);
+			int currentSemitones = note.getSemitonesFromLowestC();
+			for(Interval interval : Interval.values())
+			{
+				if(interval.equals(Interval.P1) || interval.equals(Interval.d2))
+				{
+					continue;
+				}
+
+				Note test = note.addInterval(interval);
+				if(test.getSemitonesFromLowestC() <= currentSemitones)
+				{
+					System.out.println("Count Cycle: " + note + " :: " + interval.getName());
+				}
+				if(new Note(test.getSemitonesFromLowestC()).getSemitonesFromLowestC() <= currentSemitones)
+				{
+					System.out.println("Note Cycle: " + note + " :: " + test + " :: " + interval.getName());
+				}
+
+				if(new Note(test.getSemitonesFromLowestC()).getSemitonesFromLowestC() - note.getSemitonesFromLowestC() != interval.getSemitones())
+				{
+					System.out.println("Bad Interval: " + note + " :: " + test + " :: " + interval.getName());
+				}
+
+
+			}
+		}
 	}
 
 	@Test
