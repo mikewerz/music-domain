@@ -12,7 +12,9 @@ import static com.mikewerzen.music.domain.Interval.*;
 public enum Scale
 {
 	MAJOR("Major", "", Arrays.asList(P1, M2, M3, P4, P5, M6, M7, P8)),
-	MINOR("Minor", "m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8)),
+	NATURAL_MINOR("Natural Minor", "m", Arrays.asList(P1, M2, m3, P4, P5, m6, m7, P8)),
+	MAJOR_PENTATONIC("Major Pentatonic", "", Arrays.asList(P1, M2, M3, P5, M6, P8)),
+	MINOR_PENTATONIC("Minor Pentatonic", "", Arrays.asList(P1, m3, P4, P5, m7, P8)),
 	CHROMATIC("Chromatic", "", Arrays.asList(P1, m2, M2, m3, M3, P4, A4, P5, m6, M6, m7, M7, P8)),
 	CHROMATIC_EXTENDED("Chromatic Extended", "", Arrays.asList(P1, m2, M2, m3, M3, P4, A4, P5, m6, M6, m7, M7, P8,
 			m9, M9, m10, M10, P11, A11, P12, m13, M13, m14, M14, P15));
