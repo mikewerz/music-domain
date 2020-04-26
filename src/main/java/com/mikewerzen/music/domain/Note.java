@@ -63,6 +63,10 @@ public class Note implements Comparable<Note>
 		int noteOctave = octave;
 		int noteLetterIndex = letter.getIndex() + interval.getNumber().getIndex();
 
+		//B#4 = C5 fix, but this is just a patch, whole method needs to avoid letter arithmetic
+		if (letter.equals(Letter.B) && semitonesAboveC == 0)
+			noteOctave--;
+
 		if(noteLetterIndex >= Constants.LETTERS_LENGTH)
 		{
 			noteOctave += Math.floor(noteLetterIndex / Constants.LETTERS_LENGTH);
@@ -189,6 +193,11 @@ public class Note implements Comparable<Note>
 	public int getSemitonesAboveC()
 	{
 		return semitonesAboveC;
+	}
+
+	public Note withName(String newName)
+	{
+		return new Note(newName, letter, octave, semitonesAboveC);
 	}
 
 	@Override public String toString()

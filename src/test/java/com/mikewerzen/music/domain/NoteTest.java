@@ -7,14 +7,18 @@ import java.util.stream.Collectors;
 public class NoteTest
 {
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
+		System.out.println(new Note("E#").addInterval(Interval.P5).addInterval(Interval.P8));
+
 		//System.out.println(new NoteTest().buildTable());
 		System.out.println(new Note(1));
 //		System.out.println(new Chord("C"));
 //		System.out.println(new Chord("C/F"));
 //		System.out.println(new Chord("C/E"));
+	}
 
+	private void intervalCheck()
+	{
 		for(int i = 0; i < 150; i++)
 		{
 			Note note = new Note(i);
