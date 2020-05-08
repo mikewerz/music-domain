@@ -16,7 +16,7 @@ public enum Scale
 	MAJOR_PENTATONIC("Major Pentatonic", "", Arrays.asList(P1, M2, M3, P5, M6, P8)),
 	MINOR_PENTATONIC("Minor Pentatonic", "", Arrays.asList(P1, m3, P4, P5, m7, P8)),
 	BLUES("Blues", "", Arrays.asList(P1, A2, P4, d5, P5, m7, P8)),
-	MINORBLUES("Minor Blues", "", Arrays.asList(P1, M2, A2, M3, P5, M6, P8)),
+	MINOR_BLUES("Minor Blues", "", Arrays.asList(P1, M2, A2, M3, P5, M6, P8)),
 	HARMONIC_MINOR("Harmonic Minor", "", Arrays.asList(P1, M2, m3, P4, P5, m6, M7, P8)),
 	MELODIC_MINOR("Melodic Minor", "", Arrays.asList(P1, M2, m3, P4, P5, M6, M7, P8)),
 	DIMINISHED("Diminished", "", Arrays.asList(P1, M2, m3, P4, d5, m7, d7, M7, P8)),
