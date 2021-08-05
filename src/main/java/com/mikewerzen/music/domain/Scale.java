@@ -66,6 +66,20 @@ public enum Scale
 		return intervals.stream().map(interval -> new IntervalNote(interval, root)).collect(Collectors.toList());
 	}
 
+	public List<IntervalNote> getIntervalNotesAcrossSevenOctaves(Note root)
+	{
+		int step = intervals.get(intervals.size() - 1).getSemitones() / 12;
+		List<IntervalNote> allNotes = new ArrayList<>();
+		for (int i = 1; i <= 7; i+=step)
+		{
+			root = root.setOctave(i);
+			allNotes.addAll(getIntervalNotes(root));
+			allNotes.remove(allNotes.size() - 1);
+		}
+
+		return allNotes;
+	}
+
 	public List<Note> getNotesWithIntervalNames(Note root)
 	{
 		return intervals
